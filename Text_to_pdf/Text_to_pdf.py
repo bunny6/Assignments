@@ -1,40 +1,14 @@
-
-
 import PyPDF2
-
-
-
-
 
 pdfFileObj = open('sample.pdf', 'rb')
 
-
-
-
-
 pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
-
-
-
-
 
 n=pdfReader.numPages
 
-
-
-
-
 print(n)
 
-
-
-
-
 textfile= open('textfile.txt','w') 
-
-
-
-
 
 for i in range(n):
     content=pdfReader.getPage(i).extractText()
@@ -42,27 +16,9 @@ for i in range(n):
     textfile.write(content)
     textfile.write('\n')
     
-  
-      
-      
-      
-      
-
-
-
-
-
 file=open('textfile.txt','r')
 
-
-
-
-
 data = file.read()
-
-
-
-
 
 def searching_Word(sw):
     if sw in data:
@@ -74,23 +30,6 @@ def searching_Word(sw):
         
     
   
-    
-    
-  
-    
-    
-    
-        
-       
-          
-    
-    
-   
-
-
-
-
-
 sw=input("Enter the word to search")
 print(searching_Word(sw))
 
