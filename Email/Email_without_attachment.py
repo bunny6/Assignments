@@ -1,5 +1,4 @@
- #importing inbuilt library in python.
-  
+#importing inbuilt library in python.
 import smtplib 
 from email.message import EmailMessage
 
