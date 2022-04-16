@@ -1,9 +1,7 @@
-
 #inbuilt library in python.
 #importing library.
 import smtplib  
 from email.message import EmailMessage
-
 
 msg=EmailMessage()
 msg["Subject"]="Testing is being done"    #subject to sent.
