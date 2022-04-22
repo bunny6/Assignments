@@ -1,7 +1,7 @@
 #cloning the yolo.
 !git clone https://github.com/ultralytics/yolov5  
 %cd yolov5
-%pip install -qr requirements.txt
+%pip install -qr requirements.txt  #stores information about all the libraries, modules, and packages in itself that are used while developing a particular project.
 
 #importing pytorch.
 import torch
