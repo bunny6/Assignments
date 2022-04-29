@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="/update/{{todos._id}}" method="POST">
+        <p>
+            <b><label for="content">Todo content</label></b>
+        </p>
+        <p>
+            <input type="text" name="content"
+                placeholder="Todo Content" value="{{todos.content}}"></input>
+        </p>
+
+        <p>
+            <b><label for="degree">Degree</label></b>
+        </p>
+       
+        <p>
+            <input id="degree-0" checked name="degree" required type="radio" value="Important">
+            <label for="degree-0">Important</label>
+        </p>
+       
+        
+        <p>
+            <input id="degree-1" name="degree"  required type="radio" value="Unimportant">
+            <label for="degree-1">Unimportant</label>
+        </p>
+        
+      
+        
+        <button type="submit">Update</button>
+    </form>
+</body>
+</html>

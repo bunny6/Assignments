@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FlaskApp</title>
+    <style>
+        .todo {
+            padding: 20px;
+            margin: 10px;
+            background-color: #eee;
+        }
+    </style>
+</head>
+<body>
+    <h1>FlaskTODO</h1>
+    <hr>
+    <div class="content">
+    <form method="post">
+        <p>
+            <b><label for="content">Todo content</label></b>
+        </p>
+        <p>
+            <input type="text" name="content"
+                placeholder="Todo Content"></input>
+        </p>
+
+        <p>
+            <b><label for="degree">Degree</label></b>
+        </p>
+        <p>
+            <input id="degree-0" name="degree" required type="radio" value="Important">
+            <label for="degree-0">Important</label>
+        </p>
+        <p>
+            <input id="degree-1" name="degree" required type="radio" value="Unimportant">
+            <label for="degree-1">Unimportant</label>
+        </p>
+        <button type="submit">Submit</button>
+    </form>
+    <hr>
+   
+        <div class="todo" id="todo">
+           
+        </form> 
+        </div>
+    
+    </div>
+</body>
+<script>
+    
+function ajax_get(url, ajax_fetch) {
+    var xmlhttp = new XMLHttpRequest();  //object
+    xmlhttp.onreadystatechange = function() { // called whenever ready state changes function triggers
+      //ready state describes loading state of document whwnever property changes readystatechange event fires
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) { //4 indicates request is finished and resposne is ready ,200 means ok
+        
+            console.log('responseText:' + xmlhttp.responseText);
+            try {
+                var data = JSON.parse(xmlhttp.responseText); //converts the json string to original object
+            } catch(err) {
+                console.log(err.message + " in " + xmlhttp.responseText);
+                return;
+            }
+            ajax_fetch(data);
+        }
+    };
+ 
+    xmlhttp.open("GET", url, true); //open method used to open connection to server
+    xmlhttp.send(); //send will send request object to server
+}
+ 
+ajax_get('/read', function(data) {
+   console.log(data)
+  
+   for (let i = 0; i < data.length; i++) {
+       let todoEl=document.getElementById("todo");
+       let divEl=document.createElement("div");
+       let paraEl=document.createElement("p");
+       paraEl.innerHTML=data[i].content
+       let delEl=document.createElement("a");
+       delEl.style
+       let editEl=document.createElement("a");
+       delEl.href='/delete/'+ data[i]._id.$oid
+       editEl.href='/edit/'+ data[i]._id.$oid
+       delEl.innerHTML="Delete Todo"
+       editEl.innerHTML="Edit Todo"
+       divEl.append(paraEl,delEl,editEl)
+       todoEl.appendChild(divEl)
+
+    
+}
+});
+ 
+</script>
+</html>
