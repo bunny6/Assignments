@@ -6,11 +6,11 @@ from bson.json_util import dumps
 import json
 
 
-app = Flask(__name__)
+app = Flask(__name__)                       #flask_app
 
-client = MongoClient('localhost', 27017)
+client = MongoClient('localhost', 27017)     #creating connection with database.
 
-db = client.flask1_db
+db = client.flask1_db                        
 todos = db.todos
 
 @app.route('/', methods=('GET', 'POST'))
@@ -25,19 +25,19 @@ def index():
     all_todos = todos.find()
     return render_template('index.html', todos=all_todos)
 
-@app.route('/edit/<string:id>',methods=['POST','GET'])
+@app.route('/edit/<string:id>',methods=['POST','GET'])      #editing the entry.
 def edit(id):
     data = todos.find_one({'_id': ObjectId(id)})
     print(data)
     return render_template('edit.html', todos=data)    
 
-@app.route('/delete/<string:id>',methods=['POST','GET'])
+@app.route('/delete/<string:id>',methods=['POST','GET'])      #deleting the entry.
 def delete(id):
     todos.delete_one({"_id": ObjectId(id)})
     return redirect(url_for('index'))
    
 # @app.post('/update/<id>')
-@app.route('/update/<id>', methods=['POST'])
+@app.route('/update/<id>', methods=['POST'])                   #updating the entry.
 def update_todos(id):
     if request.method=='POST':
         content = request.form['content']
@@ -47,7 +47,7 @@ def update_todos(id):
     all_todos = todos.find()
     return redirect(url_for('index'))
 
-@app.route('/read',methods = ['GET','POST'])
+@app.route('/read',methods = ['GET','POST'])                   
 def read():
     if request.method == 'GET':
         data = todos.find()
