@@ -4,10 +4,11 @@ import openpyxl
 #importing the dataset.
 path="multi_threading_activity.xlsx"
 
-obj = openpyxl.load_workbook(path)
+obj = openpyxl.load_workbook(path)         #path of xlsx file
 
 sheet1 = obj.active
 
+#Read each column  and row of xl file and added to list
 mat=[]
 
 for i in range(1, sheet1.max_row+1):
@@ -17,10 +18,11 @@ for i in range(1, sheet1.max_row+1):
     row.append(cell_obj.value)
   mat.append(row)
  
-mat.pop()
+mat.pop()  #Got null list at so popped
 
-mat.pop()
+mat.pop()   #Got null list at so popped
 
+#Replaced all the strings with value 0
 new=mat[1:]
 
 for i in range(len(new)):
@@ -38,6 +40,7 @@ print(len(new))
 
 import threading
 
+#calculated the sum of columns by adding corresonding rows
 result=[]
 def sum_of_two_rows(new):
   sumMat=[]
@@ -46,6 +49,7 @@ def sum_of_two_rows(new):
   result.append(sumMat) 
   print(sumMat)
 
+  #Found the difference of columns by subbtracting corresponding rows
 def diff_of_tow_rows(new):
   diffMat=[]
   for i in range(len(new)):
@@ -65,11 +69,11 @@ a=t1.join()
 
 b=t2.join()
 
-print(result)
+print(result)  #it contains list of sum and diffference of rows
 
 col1=result[0]
 
-col1
+col1    #it gives sum
 
 col2=result[1]
 
