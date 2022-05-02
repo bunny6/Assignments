@@ -57,13 +57,4 @@ def read():
         return data 
 
 
-# @app.route("/json")
-# def json_format():
-#     # ss=[]
-#     # for i in todos.find():
-#     #     print(i)
-#     #     ss.append(i)
-#     # with open("output.json", "w") as outfile:
-#     #     json.dump(dict(todos), outfile) 
-#     # stud_json = json.dumps(dict(todos), indent=2, sort_keys=True)
-#     return JSON.stringfy(json.loads(todos))
+
