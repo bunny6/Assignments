@@ -4,40 +4,131 @@
     <meta charset="UTF-8">
     <title>FlaskApp</title>
     <style>
+         @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@200&display=swap');
+
+/* body {
+    font-family: 'Roboto Mono', monospace;
+} */
         .todo {
             padding: 20px;
             margin: 10px;
             background-color: #eee;
         }
+        h1{
+            padding: 20px;
+        margin: 0px;
+        background-color: #002140;
+        color: white;
+        text-align: center;
+        }
+        .todo {
+        padding: 20px;
+        background-color: #103150;
+        color: white;
+    }
+
+    #heading {
+        text-align: center;
+        background-color: aliceblue;
+    }
+
+    .a {
+        text-decoration: none;
+        padding: 10px;
+        border: gray;
+    }
+
+    #form {
+        background-image: linear-gradient(180deg,#9fb8cf,#002140);
+        padding: 20px;
+        /* margin-left: 43%; */
+        padding-top: 60px;
+        padding-left: 43%;
+    }
+
+    a {
+        padding: 10px;
+        margin: 10px;
+        text-decoration: none;
+        color: silver;
+        background-color: #ffffff38;
+        right: 5px 10px;
+        border-radius: 10px;
+        position: relative;
+        left: 1100px;
+        top: -50px;
+    }
+
+    #label {
+        font-size: x-large;
+    }
+
+    input[type="text"] {
+        height: 25px;
+    }
+
+    button {
+        height: 30px;
+        width: 72px;
+        font-size: medium;
+        margin-left: 30px;
+    }
+
+    img {
+        height: 400px;
+        width: 400px;
+    }
+
+    p {
+        /* text-align: center; */
+        font-size: x-large;
+
+    }
+
+    label{
+        color: rgb(230, 220, 220);
+    }
+    .container {
+        background-image: linear-gradient(180deg,#9fb8cf,#002140);
+        height: 350px;
+    }
+    input[type="submit"]{
+        padding: 10px;
+        margin: 10px;
+    }
+    #edit{
+        position: relative;
+    }
     </style>
 </head>
 <body>
     <h1>FlaskTODO</h1>
-    <hr>
     <div class="content">
-    <form method="post">
-        <p>
-            <b><label for="content">Todo content</label></b>
-        </p>
-        <p>
-            <input type="text" name="content"
-                placeholder="Todo Content"></input>
-        </p>
+    <div class="content">
+        <div class="container">
+            <div class="context">
+                <form method="post" id="form">
+                    <strong><label for="content" id="label">Todo content</label></strong>
+                    <br><br>
+                    <input type="text" name="content" placeholder="Todo Content"></input>
+                    <br>
+                    <br>
+                    <strong><label for="degree" id="label">Degree</label></strong>
+                    <br>
+                    <br>
+                    <input id="degree-0" name="degree" required type="radio" value="Important">
+                    <label for="degree-0">Important</label>
 
-        <p>
-            <b><label for="degree">Degree</label></b>
-        </p>
-        <p>
-            <input id="degree-0" name="degree" required type="radio" value="Important">
-            <label for="degree-0">Important</label>
-        </p>
-        <p>
-            <input id="degree-1" name="degree" required type="radio" value="Unimportant">
-            <label for="degree-1">Unimportant</label>
-        </p>
-        <button type="submit">Submit</button>
-    </form>
-    <hr>
+                    <br><br>
+                    <input id="degree-1" name="degree" required type="radio" value="Unimportant">
+                    <label for="degree-1">Unimportant</label>
+                    <br><br><br> &nbsp;
+                    <button type="submit">Submit</button>
+
+                </form>
+            </div>
+        </form>
+    </div>
     {% for todo in todos %}
         <div class="todo">
             <p>{{ todo['content'] }} <i>({{ todo['degree']}})</i></p>
@@ -45,7 +136,7 @@
                 <input type="submit" value="Delete Todo">
             </form>
             <form method="POST" action="{{ url_for('edit', id=todo['_id']) }}" >
-                <input type="submit" value="Edit Todo">
+                <input type="submit" value="Edit Todo" id="edit">
         </form> 
         </div>
     {% endfor %}
