@@ -1,39 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <form action="/update/{{todos._id}}" method="POST">
-        <p>
-            <b><label for="content">Todo content</label></b>
-        </p>
-        <p>
-            <input type="text" name="content"
-                placeholder="Todo Content" value="{{todos.content}}"></input>
-        </p>
+    <title>Edit</title>
+    <style>
+        #label {
+            font-size: x-large;
+        }
 
-        <p>
-            <b><label for="degree">Degree</label></b>
-        </p>
-       
-        <p>
+        input[type="text"] {
+            height: 25px;
+        }
+
+        button {
+            height: 30px;
+            width: 72px;
+            font-size: medium;
+        }
+
+        #form {
+            background-image: linear-gradient(180deg,#9fb8cf,#002140);
+            padding: 20px;
+            border: 2px solid black;
+            height: 360px;
+            width: 500px;
+            padding: 50px;
+            border-radius: 50px;
+        }
+
+        /* body {
+            background-image: linear-gradient(180deg,#9fb8cf,#002140);
+        } */
+
+        .center {
+            padding-left: 28%;
+            padding-top: 10%;
+        }
+        form#form{
+            position: relative;
+            left: 400px;
+            top: 150px;
+        }
+        body{
+            background-color: #9fb8cf;
+        }
+    </style>
+</head>
+
+<body>
+   <div class="container">
+    <form action="/update/{{todos._id}}" method="POST" id="form">
+        <div class="center">
+            <strong><label for="content" id="label">Todo content</label></strong>
+            <br><br>
+            <input type="text" name="content" placeholder="Todo Content" value="{{todos.content}}"></input>
+            <br><br>
+            <b><label for="degree" id="label">Degree</label></b>
+            <br><br>
             <input id="degree-0" checked name="degree" required type="radio" value="Important">
             <label for="degree-0">Important</label>
-        </p>
-       
-        
-        <p>
-            <input id="degree-1" name="degree"  required type="radio" value="Unimportant">
+            <br><br>
+            <input id="degree-1" name="degree" required type="radio" value="Unimportant">
             <label for="degree-1">Unimportant</label>
-        </p>
-        
-      
-        
-        <button type="submit">Update</button>
+            <br><br>
+
+            <button type="submit">Update</button>
+        </div>
     </form>
+   </div>
 </body>
+
 </html>
