@@ -117,6 +117,16 @@
                     <label for="degree-1">Unimportant</label>
                     <br><br><br> &nbsp;
                     <button type="submit">Submit</button>
+                    <div class="alert">
+                        
+                        
+                        <p style="color: red;" id="p1">
+
+                            {{z}}
+                        </p>
+                    </div>
+                   
+                    <br>
 
                 </form>
             </div>
@@ -131,11 +141,12 @@
 
 </body>
 <script>
-
+// let pel=document.getElementById("p1")
+// pel.innerText=""
     function ajax_get(url, ajax_fetch) {
         var xmlhttp = new XMLHttpRequest();  //object
         xmlhttp.onreadystatechange = function () { // called whenever ready state changes function triggers
-            //ready state describes loading state of document whwnever property changes readystatechange event fires
+            //ready state describes loading state of document whenever property changes readystatechange event fires
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) { //4 indicates request is finished and resposne is ready ,200 means ok
 
                 console.log('responseText:' + xmlhttp.responseText);
