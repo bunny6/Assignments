@@ -29,7 +29,7 @@ def reading_file(path):
 #list Containg all the text files of Sport Folder
     for file in a:
     f = open('{}/{}'.format(path,file), 'r', encoding="latin-1")
-    #Got an utf-8 error so used encoding while reading the text in the file
+#Got an utf-8 error so used encoding while reading the text in the file
     text_data=f.read().split('\n')
     text_data = list(filter(None, text_data))
     
@@ -38,7 +38,7 @@ def reading_file(path):
              
   return all_data #sports array after making string of words from each file 
 
-# business corpus
+#business corpus
 titles=[]
 all_data=[]
 
