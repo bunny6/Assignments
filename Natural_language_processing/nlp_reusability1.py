@@ -1,3 +1,4 @@
+#importing libraries.
 import pandas as pd
 import numpy as np
 from nltk.corpus import PlaintextCorpusReader
@@ -10,8 +11,6 @@ import string
 import os
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
-from sklearn.svm import LinearSVC
-from sklearn.linear_model import SGDClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -20,15 +19,15 @@ from nltk.stem import WordNetLemmatizer, SnowballStemmer
 from nltk.tokenize import RegexpTokenizer
 import matplotlib.pyplot as plt
 
-
+#created function.
 titles=[]
 all_data=[]
 def reading_file(path):    
   filelists = PlaintextCorpusReader(path, '.*')
   a=filelists.fileids()
+
 #list Containg all the text files of Sport Folder
-  
-  for file in a:
+    for file in a:
     f = open('{}/{}'.format(path,file), 'r', encoding="latin-1")
     #Got an utf-8 error so used encoding while reading the text in the file
     text_data=f.read().split('\n')
@@ -42,21 +41,23 @@ def reading_file(path):
 # business corpus
 titles=[]
 all_data=[]
+
 #business folder path
 all_data=reading_file('document_classification/bbc_fulltext/bbc/business')
 df1 = pd.DataFrame(all_data, columns=[ 'title', 'text'])
 df1['category']="Business"
 
 
-# Entertainment
+#Entertainment folder path
 titles=[]
 all_data=[]
-#path of Entertainment Folder
+
+#Entertainment Folder path
 all_data=reading_file('document_classification/bbc_fulltext/bbc/entertainment')
 df2 = pd.DataFrame(all_data, columns=[ 'title', 'text'])
 df2['category']="Entertainment"
 
-# politics
+#politics folder path
 titles=[]
 all_data=[]
 corpus_root3 =('document_classification/bbc_fulltext/bbc/politics')
@@ -65,7 +66,7 @@ df3 = pd.DataFrame(all_data, columns=[ 'title', 'text'])
 df3['category']="Politics"
 print(df3)
 
-# Sport
+#Sport folder path
 titles=[]
 all_data=[]
 all_data=reading_file('document_classification/bbc_fulltext/bbc/sport')
@@ -74,7 +75,7 @@ df4 = pd.DataFrame(all_data, columns=[ 'title', 'text'])
 df4['category']="Sports"
 print(df4)
 
-# Tech
+#Tech folder path
 titles=[]
 all_data=[]
 all_data=reading_file('document_classification/bbc_fulltext/bbc/tech')
@@ -90,7 +91,7 @@ df=pd.concat((df1,df2,df3,df4,df5))
 
 print(df)
 
-
+#applying th encoding.
 from sklearn.preprocessing import LabelEncoder
 label_enc = LabelEncoder()
 df['label'] = label_enc.fit_transform(df['category'])
@@ -180,18 +181,6 @@ svc1_pred = svc1.predict(X_test)
 #print(f"Train Accuracy: {svc1.score(X_train, y_train)*100:.3f}%")
 print(f"Test Accuracy: {svc1.score(X_test, y_test)*100:.3f}%")
 
-svc1 = RandomForestClassifier(random_state = 42)
-svc1.fit(X_train, y_train)
-svc1_pred = svc1.predict(X_test)
-#print(f"Train Accuracy: {svc1.score(X_train, y_train)*100:.3f}%")
-print(f"Test Accuracy: {svc1.score(X_test, y_test)*100:.3f}%")
-
-svc3 = SGDClassifier(random_state = 42)
-svc3.fit(X_train, y_train)
-svc3_pred = svc3.predict(X_test)
-#print(f"Train Accuracy: {svc3.score(X_train, y_train)*100:.3f}%")
-print(f"Test Accuracy: {svc3.score(X_test, y_test)*100:.3f}%")
-
 svc4 = KNeighborsClassifier()
 #pprint(svc4.get_params())
 svc4.fit(X_train, y_train)
@@ -200,7 +189,7 @@ svc4_pred = svc4.predict(X_test)
 print(f"Test Accuracy: {svc4.score(X_test, y_test)*100:.3f}%")
 
 
-
+#Predicting.
 y_pred1 = vectorizer.transform(['Hour ago, I contemplated retirement for a lot of reasons. I felt like people were not sensitive enough to my injuries. I felt like a lot of people were backed, why not me? I have done no less. I have won a lot of games for the team, and I am not feeling backed, said Ashwin'])
 yy = svc1.predict(y_pred1)
 print(yy)
