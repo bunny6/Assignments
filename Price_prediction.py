@@ -82,8 +82,6 @@ print(y_pred)
 
 print(np.concatenate((y_pred.reshape(len(y_pred),1), Y_test.reshape(len(Y_test),1)),1))
 
-plt.scatter((Y_test),(y_pred))
-
 
 
 
