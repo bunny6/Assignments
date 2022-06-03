@@ -11,7 +11,7 @@ from tensorflow.keras.layers import Dense, Dropout
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.losses import MeanSquaredLogarithmicError
 
-#imporing the datasets.
+#imporing the datasets
 train_data = pd.read_csv('trainingset.csv')
 test_data = pd.read_csv('testset.csv')
 
