@@ -77,7 +77,7 @@ ann.compile(optimizer = 'adam', loss = 'msle', metrics = ['msle'])
 ANN=ann.fit(X_train, Y_train, batch_size = 64, epochs = 35, validation_split=0.2)
 
 #predicting on train dataset
-X_test['prediction'] = ann.predict(X_test)
+X_test['prediction'] =  ann.predict(X_test)
 
 
 
