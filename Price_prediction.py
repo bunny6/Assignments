@@ -30,7 +30,7 @@ plt.figure(figsize=(14,14))
 sns.heatmap(train_data.corr(),annot=True,linecolor ='black', linewidths = 1)
 
 plt.figure(figsize=(14,14))
-sns.heatmap(test_data.corr(),annot=True,linecolor ='black', linewidths = 1)
+sns.heatmap(test_data.corr(),annot=True,linecolor ='black', linewidths = 1) 
 
 #droping unwanted columns
 train_data=train_data.drop(['id','date','zipcode','lat','long','yr_renovated','sqft_lot','condition','yr_built','sqft_lot15'],axis=1)
