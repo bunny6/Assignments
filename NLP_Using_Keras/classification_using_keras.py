@@ -233,7 +233,7 @@ model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])
 
 model.summary()
 
-history= model.fit(x_train,y_train1, epochs=20,batch_size=64,validation_data=(x_test,y_test))
+history= model.fit(x_train,y_train1, epochs=10,batch_size=64,validation_data=(x_test,y_test))
 
 plt.figure(figsize=(16,5))
 epochs= range(1, len(history.history['accuracy'])+1)
