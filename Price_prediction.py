@@ -58,7 +58,7 @@ Y_test=sc_y.fit_transform(Y_test)
 #importing the ann.
 ann = tf.keras.models.Sequential()
 
-#adding  3 hidden layers
+#adding  3 hidden layer
 ann.add(tf.keras.layers.Dense(units=160, activation='relu'))
 
 ann.add(tf.keras.layers.Dense(units=480, activation='relu'))
