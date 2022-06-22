@@ -1,12 +1,14 @@
-#import libraries.
+#importing libraries.
 import tensorflow as tf
 import numpy as np
 import pandas as pd
 from nltk.corpus import PlaintextCorpusReader
 import re
 import nltk
+nltk.download('omw-1.4')
 nltk.download('stopwords')
 from nltk.corpus import stopwords
+from nltk.stem.porter import PorterStemmer
 from nltk.stem import WordNetLemmatizer, SnowballStemmer
 nltk.download('wordnet')
 nltk.download('punkt')
@@ -19,22 +21,19 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.metrics import (accuracy_score, roc_auc_score, confusion_matrix, roc_curve, auc, 
                              mean_squared_error, log_loss, precision_recall_curve, classification_report, 
                              precision_recall_fscore_support)
-
-tf.__version__
-
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from keras.models import Sequential
 from keras.layers import Embedding, LSTM, Dense, Dropout
 
-#unziping the dataset.
+#importing dataset.
 !unzip /content/data_text_classify.zip
 
-#creating business corpus by giving the path and reading it.
+#creating corpus by giving the path and reading it.
 corpus_root1 = '/content/txt_sentoken/neg'
 filelists = PlaintextCorpusReader(corpus_root1, '.*')
 
-#read all the text files in business folder
+#read all the text files in negative folder
 a=filelists.fileids()
 
 Neg_Corpus=[]
@@ -45,19 +44,15 @@ for file in a:
   Neg_Corpus.append(x)
 print(Neg_Corpus[0])
 
-len(Neg_Corpus)
-
-print(Neg_Corpus)
-
 negative_reviews = pd.DataFrame(
     {'review':Neg_Corpus,'label': 'Neg'}
 )
 
-#creating business corpus by giving the path and reading it.
+#creating  corpus by giving the path and reading it.
 corpus_root2 = '/content/txt_sentoken/pos'
 filelists = PlaintextCorpusReader(corpus_root2, '.*')
 
-#read all the text files in business folder
+#read all the text files
 b=filelists.fileids()
 
 Pos_Corpus=[]
@@ -72,22 +67,24 @@ positive_reviews = pd.DataFrame(
     {'review':Pos_Corpus,'label': 'POS'}
 )
 
+#applying lower to positive and negative reviews.
 positive_reviews.review = positive_reviews.review.apply(lambda x:x.lower())
-
 negative_reviews.review = negative_reviews.review.apply(lambda x:x.lower())
 
+#punctuation
 punctuations = list(string.punctuation)
 punctuations
 
+#applying punctuation
 positive_reviews.review = positive_reviews.review.apply(lambda x: " ".join(x for x in x.split() if x not in punctuations))
 negative_reviews.review = negative_reviews.review.apply(lambda x: " ".join(x for x in x.split() if x not in punctuations))
 
+#downloading stopwords
 nltk.download('stopwords')
 
 stop = stopwords.words('english')
 
-print('Total stop words:',len(stop))
-
+#applying stopwords
 positive_reviews.review = positive_reviews.review.apply(lambda x: " ".join(x for x in x.split() if x not in stop))
 negative_reviews.review = negative_reviews.review.apply(lambda x: " ".join(x for x in x.split() if x not in stop))
 
@@ -95,13 +92,14 @@ positive_reviews.review[2]
 
 nltk.download('punkt')
 
+#applying tokenizer
 positive_reviews['review_tokenized'] = positive_reviews.review.apply(lambda x: word_tokenize(x))
 negative_reviews['review_tokenized'] = negative_reviews.review.apply(lambda x: word_tokenize(x))
 
+#imporing lemmatizer
 lemmatizer = WordNetLemmatizer()
- 
-print(lemmatizer.lemmatize('increases'))
 
+#applying lemmatization
 positive_reviews['review_lemmatized'] = positive_reviews.review_tokenized.apply(lambda x: [lemmatizer.lemmatize(word) for word in x])
 negative_reviews['review_lemmatized'] = negative_reviews.review_tokenized.apply(lambda x: [lemmatizer.lemmatize(word) for word in x])
 
@@ -111,10 +109,7 @@ negative_review_list = negative_reviews['review_lemmatized'].tolist()
 positive_review_list = [item for sublist in positive_review_list for item in sublist]
 negative_review_list = [item for sublist in negative_review_list for item in sublist]
 
-print('Number of positive words',len(positive_review_list))
-
-print('Number of negative words',len(negative_review_list))
-
+#printing total number of words.
 all_words = (positive_review_list + negative_review_list)
 
 print('Number of total words in corpus',len(all_words))
@@ -126,32 +121,25 @@ most_common_words = pd.DataFrame(most_common_words)
 most_common_words.columns = ['word', 'freq']
 most_common_words
 
-most_common_words.sort_values(by='freq',ascending=True).plot(x='word', kind='barh')
-
-import seaborn as sns
-sns.distplot(positive_reviews['review'].apply(lambda y: len(y)), label='positive reviews',hist=False)
-sns.distplot(negative_reviews['review'].apply(lambda y: len(y)), label='negative reviews',hist=False)
-plt.legend()
-plt.show()
-
 most_common_words.word.tolist()[:3]
 
+#removing most common words.
 remove = most_common_words.word.tolist()[:3]
 remove
+
 
 negative_reviews['review_lemmatized'] = negative_reviews['review_lemmatized'].apply(lambda x: [y for y in x if y not in remove])
 positive_reviews['review_lemmatized'] = positive_reviews['review_lemmatized'].apply(lambda x: [y for y in x if y not in remove])
 
-print(positive_reviews)
-
+#joining the sentences
 positive_reviews['review_lemmatized_train'] = positive_reviews.review_lemmatized.apply(lambda x: ' '.join(x))
 negative_reviews['review_lemmatized_train'] = negative_reviews.review_lemmatized.apply(lambda x: ' '.join(x))
 
-print(positive_reviews)
-
+#spliting the data into X and Y
 x = (positive_reviews['review_lemmatized_train'].append(negative_reviews['review_lemmatized_train']))
 y = (positive_reviews['label'].append(negative_reviews['label']))
 
+#encoding the target column
 le = preprocessing.LabelEncoder()
 le.fit(y)
 
@@ -161,26 +149,17 @@ y = le.transform(y)
 
 print('Labels for \'{}\' are \'{}\' respectively.'.format(le.inverse_transform(np.unique(y)),np.unique(y)))
 
-y.shape
-
-print(x)
-
+#creating dataframe of X and Y.
 df = pd.DataFrame(
     {'review':x,'label': y}
 )
 
-df
-
+#shuffling the dataset
 df = df.sample(frac = 1)
 
 df.head(15)
 
-df.label.value_counts()
-
-df.tail()
-
-df.shape
-
+#splitting the data into 80-20.
 train_size=int(df.shape[0] * 0.8)
 X_train = df.review[:train_size]
 Y_train = df.label[:train_size]
@@ -188,18 +167,10 @@ Y_train = df.label[:train_size]
 X_test = df.review[train_size: ]
 Y_test = df.label[train_size: ]
 
-print(X_train)
-
-text= df['review'][0]
-print(text)
-
 corpus1=[]
 for text in df['review']:
   words=[word.lower() for word in word_tokenize(text)]
   corpus1.append(words)
-
-num_words=len(corpus1)
-print(num_words)
 
 train_size1=int(df.shape[0] * 0.8)
 x_train = df.review[:train_size]
@@ -208,33 +179,32 @@ y_train1 = df.label[:train_size]
 x_test = df.review[train_size: ]
 y_test = df.label[train_size: ]
 
+num_words=len(corpus1)
+print(num_words)
+
+#applying tokenization
 tokenizer = Tokenizer(num_words)
 tokenizer.fit_on_texts(x_train)
 x_train=tokenizer.texts_to_sequences(x_train)
 x_train=pad_sequences(x_train, maxlen=128,truncating='post',padding='post')
 
-x_train[0], len(x_train[0])
-
 x_test=tokenizer.texts_to_sequences(x_test)
 x_test=pad_sequences(x_test, maxlen=128,truncating='post',padding='post')
 
-x_test[0], len(x_test[0])
-
-print(x_train.shape, y_train1.shape)
-print(x_test.shape, y_test.shape)
-
+#importing model.
 model = Sequential()
 model.add(Embedding(input_dim=num_words, output_dim=100, input_length=128, trainable=True))
-model.add(LSTM(100,dropout=0.1, return_sequences=True))
-model.add(LSTM(100, dropout=0.1))
+model.add(LSTM(100, dropout=0.2))
 model.add(Dense(1, activation='sigmoid'))
 
 model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])
 
 model.summary()
 
+#training the model.
 history= model.fit(x_train,y_train1, epochs=10,batch_size=64,validation_data=(x_test,y_test))
 
+#plotting training loss and validation loss.
 plt.figure(figsize=(16,5))
 epochs= range(1, len(history.history['accuracy'])+1)
 plt.plot(epochs, history.history['loss'],'b',label='Training Loss',color='red')
@@ -242,6 +212,7 @@ plt.plot(epochs, history.history['val_loss'],'b',label='Validation Loss')
 plt.legend()
 plt.show()
 
+#plotting training accuracy and validation accuracy.
 plt.figure(figsize=(16,5))
 epochs= range(1, len(history.history['accuracy'])+1)
 plt.plot(epochs, history.history['accuracy'],'b',label='Training Accuracy',color='red')
@@ -249,27 +220,45 @@ plt.plot(epochs, history.history['val_accuracy'],'b',label='Validation Accuracy'
 plt.legend()
 plt.show()
 
-validation_sentence=['This movie was not good at all. It had some good parts like acting was pretty good but the story was not impressing at all.']
+#predicting on new/unseen sentences.
+validation_sentence=['It had some good parts like storyline although the actors performed really well and that is why overall I enjoyed.']
 validation_sentence_tokenized=tokenizer.texts_to_sequences(validation_sentence)
 validation_sentence_padded=pad_sequences(validation_sentence_tokenized, maxlen=128, truncating='post', padding='post')
 print(validation_sentence[0])
 print('Probability of positive: {}'.format(model.predict(validation_sentence_padded)[0]))
 
-validation_sentence=['It had some good parts like storyline although the actors performed really well and that is why overall I enjooyed it.']
-validation_sentence_tokenized=tokenizer.texts_to_sequences(validation_sentence)
-validation_sentence_padded=pad_sequences(validation_sentence_tokenized, maxlen=128, truncating='post', padding='post')
-print(validation_sentence[0])
-print('Probability of positive: {}'.format(model.predict(validation_sentence_padded)[0]))
+print(validation_sentence_padded)
 
-validation_sentence=['i can watch this movie forever just because of the beauty in its cinematography.']
-validation_sentence_tokenized=tokenizer.texts_to_sequences(validation_sentence)
-validation_sentence_padded=pad_sequences(validation_sentence_tokenized, maxlen=128, truncating='post', padding='post')
-print(validation_sentence[0])
-print('Probability of positive: {}'.format(model.predict(validation_sentence_padded)[0]))
+az=model.predict(validation_sentence_padded)[0]
 
-validation_sentence=['today i watched stranger things. Overall the movie was good.']
-validation_sentence_tokenized=tokenizer.texts_to_sequences(validation_sentence)
-validation_sentence_padded=pad_sequences(validation_sentence_tokenized, maxlen=128, truncating='post', padding='post')
-print(validation_sentence[0])
-print('Probability of positive: {}'.format(model.predict(validation_sentence_padded)[0]))
+print(az)
 
+#created a function to predict on unseen data.
+def prediction(validation_sentence):
+  validation_sentence_tokenized=tokenizer.texts_to_sequences(validation_sentence)
+  validation_sentence_padded=pad_sequences(validation_sentence_tokenized, maxlen=128, truncating='post', padding='post')
+  print(validation_sentence)
+  az=model.predict(validation_sentence_padded)[0]
+  print('Probability of positive: {}'.format(model.predict(validation_sentence_padded)[0][0]))
+  if az[0] > 0.5:
+    print('Class of the document is 1')
+  else:
+    print('Class of the document is 0')
+validation_sentence= ['No sense of humour, pathetic acting, and boring story']
+prediction(validation_sentence)
+
+#sentences which are tested.
+# I watched the movie today, cinemetography was fine but the actors performed well
+# I watched the movie today, cinemetography was not much good
+# Overall a great comedy movie
+# Great sense of humour, great acting, and outstanding story
+# No sense of humour, pathetic acting, and boring story
+
+y_test=y_test.to_numpy()
+
+y_pred = model.predict(x_test)
+
+for i in y_pred:
+  i[0]=i[0].round(2)
+
+print(np.concatenate((y_pred.reshape(len(y_pred),1), y_test.reshape(len(y_test),1)),1))
