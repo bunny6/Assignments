@@ -1,4 +1,4 @@
-#importing libraries
+#importing libraries.
 import math
 import pandas as pd
 import tensorflow as tf
@@ -10,10 +10,9 @@ from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.layers import Dense, Dropout
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.losses import MeanSquaredLogarithmicError
-
-#imporing the datasets
 train_data = pd.read_csv('trainingset.csv')
 test_data = pd.read_csv('testset.csv')
+price = 'price'
 
 train_data.head()
 
@@ -24,61 +23,92 @@ train_data.isnull().sum()
 
 test_data.isnull().sum()
 
-#ploting the heatmap for checking the correlation between the target column and other features
+#plotting the heatmap for training dataset for checking the correlation between the features.
 import seaborn as sns
 plt.figure(figsize=(14,14))
 sns.heatmap(train_data.corr(),annot=True,linecolor ='black', linewidths = 1)
 
+#plotting the heatmap for test dataset for checking the correlation between the features.
+import seaborn as sns
 plt.figure(figsize=(14,14))
-sns.heatmap(test_data.corr(),annot=True,linecolor ='black', linewidths = 1) 
+sns.heatmap(test_data.corr(),annot=True,linecolor ='black', linewidths = 1)
 
-#droping unwanted columns
+#dropping the columns which have less correlation with the targer column
 train_data=train_data.drop(['id','date','zipcode','lat','long','yr_renovated','sqft_lot','condition','yr_built','sqft_lot15'],axis=1)
 test_data=test_data.drop(['id','date','zipcode','lat','long','yr_renovated','sqft_lot','condition','yr_built','sqft_lot15'],axis=1)
 
-#spliting the dataset
-X_train=train_data.iloc[:,1:].values
-Y_train=train_data.iloc[:,0].values
+#plotting heatmap after dropping unnecessary columns for training data.
+plt.figure(figsize=(14,14))
+sns.heatmap(train_data.corr(),annot=True,linecolor ='black', linewidths = 1)
 
-X_test=test_data.iloc[:,1:].values
-Y_test=test_data.iloc[:,0].values
+#plotting heatmap after dropping unnecessary columns for test dataset.
+plt.figure(figsize=(14,14))
+sns.heatmap(test_data.corr(),annot=True,linecolor ='black', linewidths = 1)
 
-Y_train = Y_train.reshape((17290, -1))
-Y_test = Y_test.reshape((4323, -1))
+#concating the dataset.
+final_df=pd.concat([train_data,test_data],axis=0)
+
+final_df.head()
+
+#spliting the dataset into X and Y.
+y = final_df['price'].copy()
+X = final_df.drop('price', axis=1).copy()
 
 #scaling the dataset.
-from sklearn.preprocessing import StandardScaler
-sc_X=StandardScaler()
-sc_y=StandardScaler()
-X_train=sc_X.fit_transform(X_train)
-Y_train=sc_y.fit_transform(Y_train)
-X_test=sc_X.fit_transform(X_test)
-Y_test=sc_y.fit_transform(Y_test)
+scaler = StandardScaler()
 
-#importing the ann.
-ann = tf.keras.models.Sequential()
+X = scaler.fit_transform(X)
 
-#adding  3 hidden layer
-ann.add(tf.keras.layers.Dense(units=160, activation='relu'))
+#splitting it into train and test.
+tf_X_train, tf_X_test, tf_y_train, tf_y_test = train_test_split(X, y, train_size=0.7, random_state=1)
 
-ann.add(tf.keras.layers.Dense(units=480, activation='relu'))
+tf_X_train.shape
 
-ann.add(tf.keras.layers.Dense(units=160, activation='relu'))
- 
-#adding output layer
-ann.add(tf.keras.layers.Dense(units=1, activation='linear'))
+#creating model using tensorflow.
+inputs = tf.keras.Input(shape=(10,))
+hidden = tf.keras.layers.Dense(64, activation='relu')(inputs)
+hidden = tf.keras.layers.Dense(64, activation='relu')(hidden)
+outputs = tf.keras.layers.Dense(1, activation='linear')(hidden)
 
-#loss function
-msle=MeanSquaredLogarithmicError()
+tf_model = tf.keras.Model(inputs, outputs)
 
-ann.compile(optimizer = 'adam', loss = 'msle', metrics = ['msle'])
 
-#training the ann 
-ANN=ann.fit(X_train, Y_train, batch_size = 64, epochs = 35, validation_split=0.2)
+tf_model.compile(
+    optimizer='adam',
+    loss='mse'
+)
 
-#predicting on train dataset
-X_test['prediction'] =  ann.predict(X_test)
+#training the model.
+history = tf_model.fit(
+    tf_X_train,
+    tf_y_train,
+    validation_split=0.12,
+    batch_size=32,
+    epochs=10
+)
 
+import numpy as np
+tf_rmse = np.sqrt(tf_model.evaluate(tf_X_test, tf_y_test))
+
+print("TensorFlow RMSE:", tf_rmse)
+
+#predicting on the test dataset.
+pred_1 = tf_model.predict(tf_X_test)
+
+df_prediction = pd.DataFrame(pred_1, columns=['Prediction'])
+
+df_prediction.head()
+
+# floating point number
+float_number = df_prediction['Prediction']
+# Convert float to string
+string_number = str(float_number)
+# Access the first digit using indexing
+first_digit = string_number[0]
+# Convert first digit string value to integer
+first_digit = int(first_digit)
+# Print the first digit to console
+print(f'The first digit of {float_number} is: {first_digit}')
 
 
 
