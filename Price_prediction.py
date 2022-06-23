@@ -1,4 +1,3 @@
-#importing libraries.
 import math
 import pandas as pd
 import tensorflow as tf
@@ -29,11 +28,10 @@ plt.figure(figsize=(14,14))
 sns.heatmap(train_data.corr(),annot=True,linecolor ='black', linewidths = 1)
 
 #plotting the heatmap for test dataset for checking the correlation between the features.
-import seaborn as sns
 plt.figure(figsize=(14,14))
 sns.heatmap(test_data.corr(),annot=True,linecolor ='black', linewidths = 1)
 
-#dropping the columns which have less correlation with the targer column
+#dropping features which are not having good correlation with the target column.
 train_data=train_data.drop(['id','date','zipcode','lat','long','yr_renovated','sqft_lot','condition','yr_built','sqft_lot15'],axis=1)
 test_data=test_data.drop(['id','date','zipcode','lat','long','yr_renovated','sqft_lot','condition','yr_built','sqft_lot15'],axis=1)
 
@@ -45,70 +43,66 @@ sns.heatmap(train_data.corr(),annot=True,linecolor ='black', linewidths = 1)
 plt.figure(figsize=(14,14))
 sns.heatmap(test_data.corr(),annot=True,linecolor ='black', linewidths = 1)
 
-#concating the dataset.
+#concating the training and testing datasets.
 final_df=pd.concat([train_data,test_data],axis=0)
 
-final_df.head()
-
-#spliting the dataset into X and Y.
+#spliting the data into train and test..
 y = final_df['price'].copy()
 X = final_df.drop('price', axis=1).copy()
 
-#scaling the dataset.
-scaler = StandardScaler()
-
-X = scaler.fit_transform(X)
-
-#splitting it into train and test.
 tf_X_train, tf_X_test, tf_y_train, tf_y_test = train_test_split(X, y, train_size=0.7, random_state=1)
 
-tf_X_train.shape
+#scaling the data.
+from sklearn import preprocessing
+tf_X_train=preprocessing.normalize(tf_X_train)
+tf_X_test=preprocessing.normalize(tf_X_test)
 
-#creating model using tensorflow.
-inputs = tf.keras.Input(shape=(10,))
-hidden = tf.keras.layers.Dense(64, activation='relu')(inputs)
-hidden = tf.keras.layers.Dense(64, activation='relu')(hidden)
-outputs = tf.keras.layers.Dense(1, activation='linear')(hidden)
+tf_X_train[0]
 
-tf_model = tf.keras.Model(inputs, outputs)
+#importing  and loading the model.
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import *
 
-
-tf_model.compile(
-    optimizer='adam',
-    loss='mse'
-)
-
-#training the model.
-history = tf_model.fit(
-    tf_X_train,
-    tf_y_train,
-    validation_split=0.12,
-    batch_size=32,
-    epochs=10
-)
+def HousePredictionModel():
+    model=Sequential()
+    model.add(Dense(128, activation='relu',input_shape=(tf_X_train[0].shape)))
+    model.add(Dense(64, activation='relu'))
+    model.add(Dense(32, activation='relu'))
+    model.add(Dense(1))
+    model.compile(optimizer='rmsprop',loss='mse',metrics=['mae'])
+    return model
 
 import numpy as np
-tf_rmse = np.sqrt(tf_model.evaluate(tf_X_test, tf_y_test))
+k = 4
+num_val_samples = len(tf_X_train)
+num_epochs = 30
+all_scores = []
 
-print("TensorFlow RMSE:", tf_rmse)
+#training the model.
+model = HousePredictionModel()
+history=model.fit(x=tf_X_train,y=tf_y_train, epochs=num_epochs,batch_size=64,verbose=1,validation_data=(tf_X_test,tf_y_test))
+
+#predicting on the new data.
+test_input=[[0.00112569, 0.00093854, 0.5827965 , 0.00112528, 0.        ,
+       0.        , 0.00300210, 0.5827943 , 0.        , 0.56628666]]
+       
+aa=model.predict(test_input)
+print(aa)
 
 #predicting on the test dataset.
-pred_1 = tf_model.predict(tf_X_test)
+ab=model.predict(tf_X_test)
+print(ab)
 
-df_prediction = pd.DataFrame(pred_1, columns=['Prediction'])
+ab.shape
 
-df_prediction.head()
+final_df1=pd.DataFrame(data=ab,columns=["predicted"])
+final_df1.shape
 
-# floating point number
-float_number = df_prediction['Prediction']
-# Convert float to string
-string_number = str(float_number)
-# Access the first digit using indexing
-first_digit = string_number[0]
-# Convert first digit string value to integer
-first_digit = int(first_digit)
-# Print the first digit to console
-print(f'The first digit of {float_number} is: {first_digit}')
+final_df1['Original']=tf_y_test.copy
+
+print(final_df1.head())
+
+print(tf_y_test)
 
 
 
