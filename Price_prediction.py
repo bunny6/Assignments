@@ -1,4 +1,4 @@
-#importing necessary libraries.
+#importing necessary libraries
 import math
 import pandas as pd
 import tensorflow as tf
