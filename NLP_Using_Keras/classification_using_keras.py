@@ -22,15 +22,19 @@ from sklearn.metrics import (accuracy_score, roc_auc_score, confusion_matrix, ro
                              mean_squared_error, log_loss, precision_recall_curve, classification_report, 
                              precision_recall_fscore_support)
 from keras.preprocessing.text import Tokenizer
-from keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 from keras.models import Sequential
 from keras.layers import Embedding, LSTM, Dense, Dropout
+from zipfile import ZipFile
 
 #importing dataset.
-!unzip /content/data_text_classify.zip
+#unzip /content/data_text_classify.zip
+import zipfile
+with zipfile.ZipFile("data_text_classify.zip","r") as zip_ref:
+    zip_ref.extractall("~/Documents/NLP_using_keras")
 
 #creating corpus by giving the path and reading it.
-corpus_root1 = '/content/txt_sentoken/neg'
+corpus_root1 = '~/Documents/NLP_using_keras/txt_sentoken/neg'
 filelists = PlaintextCorpusReader(corpus_root1, '.*')
 
 #read all the text files in negative folder
@@ -49,7 +53,7 @@ negative_reviews = pd.DataFrame(
 )
 
 #creating  corpus by giving the path and reading it.
-corpus_root2 = '/content/txt_sentoken/pos'
+corpus_root2 = '~/Documents/NLP_using_keras/txt_sentoken/pos'
 filelists = PlaintextCorpusReader(corpus_root2, '.*')
 
 #read all the text files
@@ -233,7 +237,6 @@ az=model.predict(validation_sentence_padded)[0]
 
 print(az)
 
-#created a function to predict on unseen data.
 def prediction(validation_sentence):
   validation_sentence_tokenized=tokenizer.texts_to_sequences(validation_sentence)
   validation_sentence_padded=pad_sequences(validation_sentence_tokenized, maxlen=128, truncating='post', padding='post')
@@ -260,5 +263,7 @@ y_pred = model.predict(x_test)
 
 for i in y_pred:
   i[0]=i[0].round(2)
+
+
 
 print(np.concatenate((y_pred.reshape(len(y_pred),1), y_test.reshape(len(y_test),1)),1))
