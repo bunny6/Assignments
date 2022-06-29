@@ -32,12 +32,12 @@ train_data.isnull().sum()
 
 test_data.isnull().sum()
 
-#plotting heatmap
+#plotting heatmap for training dataset
 import seaborn as sns
 plt.figure(figsize=(14,14))
 sns.heatmap(train_data.corr(),annot=True,linecolor ='black', linewidths = 1)
 
-import seaborn as sns
+#plotting heatmap for test dataset
 plt.figure(figsize=(14,14))
 sns.heatmap(test_data.corr(),annot=True,linecolor ='black', linewidths = 1)
 
@@ -67,20 +67,23 @@ test_data=test_data.drop(['id','date','zipcode','lat','long','yr_renovated','sqf
 test_data_price=test_data['price']
 test_data=test_data.drop(['price'],axis=1)
 
-
+#spliting the data
 y = train_data['price']
 X = train_data.drop(['price'],axis=1)
 
 tf_X_train, tf_X_test, tf_y_train, tf_y_test = train_test_split(X, y, train_size=0.7, random_state=1)
 
+#scaling the dataset
 from sklearn import preprocessing
 tf_X_train=preprocessing.normalize(tf_X_train)
 tf_X_test=preprocessing.normalize(tf_X_test)
 
 test_data=preprocessing.normalize(test_data)
 
+#plotting the pairplot for training dataset.
 sns.pairplot(train_data,diag_kind='kde')
 
+#importing model
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import *
 
@@ -99,12 +102,15 @@ num_val_samples = len(tf_X_train)
 num_epochs = 30
 all_scores = []
 
+#training the model.
 model = HousePredictionModel()
 history=model.fit(x=tf_X_train,y=tf_y_train, epochs=num_epochs,batch_size=64,verbose=1,validation_data=(tf_X_test,tf_y_test))
 
+#predicting on test dataset.
 ab=model.predict(test_data)
 print(ab)
 
+#creating dataframe of original and predicted data.
 predicted=pd.DataFrame(ab,columns=['Prediction'])
 
 predicted.head()
