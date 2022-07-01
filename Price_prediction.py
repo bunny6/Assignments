@@ -136,7 +136,7 @@ print(f"RMSE: {rmse:0.2f}")
 SE_line = sum((test_data_price-result1)**2)
 SE_mean = sum((test_data_price-test_data_price.mean())**2)
 r2 = 1-(SE_line/SE_mean)
-print(f"R^2 coefficient of determination: {r2*100:0.2f}%")
+print(f"R^2 coefficient of determination: {r2*100:0.2f}%") 
 
 
 
